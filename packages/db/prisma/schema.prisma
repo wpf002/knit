@@ -29,6 +29,16 @@ model User {
   // are discoverable and their rentals are paid. A creator is still someone's
   // friend — the same closet is exposed at different tiers (see Visibility).
   isCreator   Boolean  @default(false)
+  // Creator-layer payouts run through Stripe Connect; walletCents is the
+  // in-app circular balance (lending earnings that can fund your own renting).
+  stripeConnectId String?
+  walletCents     Int     @default(0)
+  // Rewards (perks/discounts) accrue here from completed transactions.
+  points          Int     @default(0)
+  // Fit profile — powers "size twins": seeing how a piece fit someone built
+  // like you. Optional, set by the user.
+  heightCm        Int?
+  usualSize       String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -44,6 +54,7 @@ model User {
   txAsCounterparty   Transaction[]      @relation("TxCounterparty")
   ratingsGiven       Rating[]           @relation("RatingRater")
   ratingsReceived    Rating[]           @relation("RatingRatee")
+  saved              SavedItem[]
 
   @@index([handle])
 }
@@ -140,15 +151,34 @@ model ClosetItem {
   // Prices in integer cents. Null = not for that action / free.
   rentDailyCents Int?
   buyCents       Int?
+  // Refundable security deposit held during a creator-layer (paid) rental.
+  depositCents   Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   transactions Transaction[]
+  savedBy      SavedItem[]
 
   @@index([ownerId, status])
   @@index([visibility, status])
+}
+
+// Phase 2: "browse and save". A lightweight wishlist — saving is a pre-intent
+// signal (no transaction yet) and the like signal we later convert into offers.
+model SavedItem {
+  id        String   @id @default(cuid())
+  userId    String
+  itemId    String
+  createdAt DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item ClosetItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+  @@index([userId])
+  @@index([itemId])
 }
 
 // ---------------------------------------------------------------------------
@@ -173,6 +203,10 @@ model Transaction {
   // rentals and all buys carry a price; platformFeeCents is the take rate.
   priceCents      Int?
   platformFeeCents Int @default(0)
+  // Refundable deposit held for this rental, and the payment lifecycle.
+  depositCents          Int           @default(0)
+  paymentStatus         PaymentStatus @default(NONE)
+  stripePaymentIntentId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -268,6 +302,20 @@ enum FriendshipStatus {
   PENDING
   ACCEPTED
   BLOCKED
+}
+
+// Payment lifecycle for a (creator-layer) paid rental.
+//   NONE             — friend-layer / nothing to pay
+//   REQUIRES_PAYMENT — accepted, awaiting the renter's payment
+//   PAID             — rent + deposit collected (Stripe or wallet)
+//   REFUNDED         — completed cleanly, deposit returned
+//   DAMAGE_CAPTURED  — some/all of the deposit kept for damage
+enum PaymentStatus {
+  NONE
+  REQUIRES_PAYMENT
+  PAID
+  REFUNDED
+  DAMAGE_CAPTURED
 }
 
 enum CircleRole {

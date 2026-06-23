@@ -53,15 +53,7 @@ export default function Home() {
         <span style={{ color: "var(--raspberry)" }}> can&apos;t shop</span>.
       </h1>
 
-      <p
-        className="rise"
-        style={{ fontSize: "1.05rem", color: "var(--muted)", margin: "1.1rem 0 2.25rem" }}
-      >
-        Not an affiliate link to buy the dress new. Access to <em>her actual dress</em> —
-        from the people you actually know and the creators you actually follow.
-      </p>
-
-      <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: "0.75rem" }}>
+      <ul style={{ listStyle: "none", margin: "2.25rem 0 0", padding: 0, display: "grid", gap: "0.75rem" }}>
         {layers.map((l) => (
           <li
             key={l.tag}
@@ -92,13 +84,6 @@ export default function Home() {
         ))}
       </ul>
 
-      <p style={{ marginTop: "2.5rem", fontSize: "0.85rem", color: "var(--muted)" }}>
-        Scaffold running. API expected at{" "}
-        <code style={{ fontFamily: "ui-monospace, monospace" }}>
-          {process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000"}
-        </code>
-        .
-      </p>
     </main>
   );
 }

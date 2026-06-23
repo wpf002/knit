@@ -1,0 +1,17 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Knit">
+  <!-- Logo #2: raspberry circular knot-monogram on warm paper.
+       A clean ring (the "close-knit" circle of friends) with a thread-end curl
+       at the lower-right (the knot / textile meaning). Content sits inside the
+       maskable safe zone so it survives OS icon cropping. -->
+  <rect width="512" height="512" rx="116" fill="#fbf6f2" />
+  <g fill="none" stroke="#d6336c" stroke-width="22" stroke-linecap="round" stroke-linejoin="round">
+    <!-- ring -->
+    <circle cx="256" cy="256" r="160" />
+    <!-- knot: the thread end loops out and curls back at the lower-right -->
+    <path d="M369 369 c 34 22 64 8 60 -22 c -3 -22 -30 -28 -44 -8" />
+    <!-- K monogram -->
+    <path d="M212 168 L212 344" />
+    <path d="M212 262 L300 168" />
+    <path d="M212 262 L300 344" />
+  </g>
+</svg>

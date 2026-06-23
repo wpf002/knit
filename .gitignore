@@ -24,3 +24,9 @@ packages/db/prisma/migrations/dev/
 *.log
 .DS_Store
 coverage/
+
+# local Claude config (machine-specific)
+.claude/settings.local.json
+
+# accidental nested duplicate of the repo (has its own .git)
+/knit/

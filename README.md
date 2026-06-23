@@ -72,7 +72,7 @@ curl -H "x-user-id: <SEEDED_USER_ID>" http://localhost:4000/items
 
 ## Build order
 
-The schema supports the whole roadmap; build in this sequence so each step validates before the next:
+The schema supports the whole roadmap; build each phase **end-to-end** (db → `@knit/shared` → `@knit/api` → `@knit/web`) before the next, so each step validates before the one after it:
 
 1. **Closet object + onboarding** that feels like posting (not data entry) — the keystone risk.
 2. **Circle feed + Discover feed** — browse and save, no transactions.
@@ -81,6 +81,35 @@ The schema supports the whole roadmap; build in this sequence so each step valid
 5. **Buy + give away.**
 6. **Ratings + rewards.**
 7. **AI assistant** — only once there's enough inventory to be useful.
+
+## The edge (what competitors structurally can't copy)
+
+Researched against Pickle, By Rotation, Depop, HURR, The Volte, Hire Street, RTR, Armoire, Nuuly. The rental/subscription incumbents have polished mechanics but **no social graph**; the social-resale players have a graph but weak commerce. Knit's wedge is that *fit, trust, and discovery all get easier the more social you are* — so these features compound the moat. Each is tagged to the phase it lands in:
+
+- **Listing flow = feed-content engine** *(Phase 1→2)* — nudge worn-on-body photos at listing time; auto-generate a feed post when a loan completes. Solves cold-start feed content as a byproduct of listing.
+- **Circle FOMO + notify-on-drop** *(Phase 2)* — "3 new pieces in your circle's closets this week." Leans on the `Circle` model; tight-group exclusivity a public marketplace can't manufacture.
+- **Reverse request — "I need an outfit" → ask your circle** *(Phase 2/3)* — post "black-tie, size 8, this Saturday" and let friends/creators offer pieces. Demand→supply, where everyone else is supply→demand.
+- **Local free handoff = a cost moat** *(Phase 3)* — friends are physically close; in-person handoff is free, same-day, social. Structural advantage over shipping-bound competitors.
+- **Friend-fit notes / "size twins"** *(Phase 6, hook in Phase 2)* — show how a piece fit *the friend whose body you know*, plus a "find friends my size" filter. Beats RTR's stranger fit-notes.
+- **Circular wallet / borrow-back credit** *(Phase 4)* — lending earnings fund your own renting; a lightweight favor-reciprocity on the friend layer.
+- **AI stylist over your network's real inventory** *(Phase 7, $10 Plus tier)* — "for the wedding, borrow Ana's green dress + Jo's clutch — both free, both your size, both available." Styles you from people you know, not a faceless catalog. The clearest justification for Plus.
+
+Supporting trust mechanics to adopt wholesale: double-blind two-sided reviews + "Top Lender" badges (HURR), suggested price + "recoup cost in N loans" projection at listing, retail-price anchoring on every card, and **"Available Now" as a first-class card state** (mandatory for single-unit inventory).
+
+Anti-patterns to design around: thin inventory kills the feed (concentrate launch geography — the close-knit cluster does this); don't let the social feed bury the shop path (Depop's flaw); mobile performance is a feature (PWA); mandate a full-look photo + detail shots (over-zoomed photos hurt fit perception).
+
+## Brand
+
+Tokens live in `apps/web/app/globals.css` and are intentional — **don't drift to the cream + terracotta + serif default.**
+
+| Token | Value | Role |
+|---|---|---|
+| `--paper` | `#fbf6f2` | warm background |
+| `--ink` | `#2a2230` | deep aubergine text |
+| `--raspberry` | `#d6336c` | accent — **creator** layer + brand mark |
+| `--sage` | `#7e9b86` | secondary — **friend/circle** layer |
+
+Display type **Fraunces**, body **Inter**. The logo is a **raspberry circular knot-monogram** (the knot = the "close-knit" + textile double meaning), at `apps/web/app/icon.svg`, used as the PWA app icon and favicon.
 
 ## Deploy (Railway)
 

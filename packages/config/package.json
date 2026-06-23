@@ -1,0 +1,10 @@
+{
+  "name": "@drobe/config",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "prettier.config.mjs",
+  "exports": {
+    "./prettier": "./prettier.config.mjs"
+  }
+}

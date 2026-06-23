@@ -1,0 +1,22 @@
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Drobe",
+  description:
+    "Your friends' and favorite creators' closets — rent, buy, or give away the actual pieces.",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2A2230",
+  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}

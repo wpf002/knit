@@ -1,0 +1,287 @@
+// Drobe data model.
+// This schema is the concept made concrete. Read it top to bottom and the
+// product falls out: two transaction LAYERS (friend = free, creator = paid),
+// per-item VISIBILITY tiers (circle / follower / public), a mutual FRIEND graph
+// plus a one-way CREATOR follow graph, rent/buy/giveaway, ratings, and the
+// $10 Plus subscription.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// People
+// ---------------------------------------------------------------------------
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  handle      String   @unique // @username
+  displayName String
+  bio         String?
+  avatarUrl   String?
+  // isCreator flips a user into the creator layer: their PUBLIC/FOLLOWER items
+  // are discoverable and their rentals are paid. A creator is still someone's
+  // friend — the same closet is exposed at different tiers (see Visibility).
+  isCreator   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  closetItems        ClosetItem[]
+  ownedCircles       Circle[]           @relation("CircleOwner")
+  memberships        CircleMembership[]
+  friendshipsSent    Friendship[]       @relation("FriendshipRequester")
+  friendshipsRecv    Friendship[]       @relation("FriendshipAddressee")
+  following          Follow[]           @relation("Follower")
+  followers          Follow[]           @relation("Followee")
+  subscription       Subscription?
+  txAsOwner          Transaction[]      @relation("TxOwner")
+  txAsCounterparty   Transaction[]      @relation("TxCounterparty")
+  ratingsGiven       Rating[]           @relation("RatingRater")
+  ratingsReceived    Rating[]           @relation("RatingRatee")
+
+  @@index([handle])
+}
+
+// ---------------------------------------------------------------------------
+// The two graphs
+// Friendship = mutual, the friend layer (trust is free).
+// Follow     = one-way, the creator layer (aspiration + paid access).
+// ---------------------------------------------------------------------------
+
+model Friendship {
+  id          String           @id @default(cuid())
+  requesterId String
+  addresseeId String
+  status      FriendshipStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+
+  requester User @relation("FriendshipRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  addressee User @relation("FriendshipAddressee", fields: [addresseeId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, addresseeId])
+  @@index([addresseeId, status])
+}
+
+model Follow {
+  id         String   @id @default(cuid())
+  followerId String
+  followeeId String
+  createdAt  DateTime @default(now())
+
+  follower User @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followee User @relation("Followee", fields: [followeeId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followeeId])
+  @@index([followeeId])
+}
+
+// Closet circles: group-level exclusivity (friend group, sorority, team).
+// Tight enough to keep trust + FOMO, dense enough that the feed moves.
+model Circle {
+  id        String             @id @default(cuid())
+  name      String
+  ownerId   String
+  createdAt DateTime           @default(now())
+
+  owner       User               @relation("CircleOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  memberships CircleMembership[]
+
+  @@index([ownerId])
+}
+
+model CircleMembership {
+  id       String     @id @default(cuid())
+  circleId String
+  userId   String
+  role     CircleRole @default(MEMBER)
+  joinedAt DateTime   @default(now())
+
+  circle Circle @relation(fields: [circleId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([circleId, userId])
+  @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// The closet
+// ---------------------------------------------------------------------------
+
+model ClosetItem {
+  id        String     @id @default(cuid())
+  ownerId   String
+
+  title     String
+  brand     String?
+  category  String? // dress, blazer, denim, bag...
+  size      String? // free text now; normalize later
+  fit       String? // slim / regular / oversized
+  material  String?
+  color     String?
+  photos    String[]   @default([])
+
+  // Who can see it. CIRCLE = friends only; FOLLOWER = your followers (creator
+  // layer); PUBLIC = discoverable. One inventory, multiple doors.
+  visibility Visibility @default(CIRCLE)
+  status     ItemStatus @default(AVAILABLE)
+
+  // What can be done with it. Rent is free on the friend layer and priced on
+  // the creator layer (see Transaction.layer / priceCents).
+  rentable   Boolean @default(true)
+  buyable    Boolean @default(false)
+  giveable   Boolean @default(false)
+
+  // Prices in integer cents. Null = not for that action / free.
+  rentDailyCents Int?
+  buyCents       Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner        User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@index([ownerId, status])
+  @@index([visibility, status])
+}
+
+// ---------------------------------------------------------------------------
+// Transactions: rent / buy / giveaway, on the friend or creator layer
+// ---------------------------------------------------------------------------
+
+model Transaction {
+  id             String            @id @default(cuid())
+  itemId         String
+  ownerId        String // lender / seller / giver
+  counterpartyId String // borrower / buyer / receiver
+
+  kind   TransactionKind
+  layer  TransactionLayer // FRIEND => free rentals; CREATOR => paid
+  status TransactionStatus @default(REQUESTED)
+
+  // Rental window (null for buy / giveaway).
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Money in cents. Friend-layer rentals are 0/null by design. Creator-layer
+  // rentals and all buys carry a price; platformFeeCents is the take rate.
+  priceCents      Int?
+  platformFeeCents Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  item         ClosetItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  owner        User       @relation("TxOwner", fields: [ownerId], references: [id])
+  counterparty User       @relation("TxCounterparty", fields: [counterpartyId], references: [id])
+  ratings      Rating[]
+
+  @@index([ownerId, status])
+  @@index([counterpartyId, status])
+  @@index([itemId])
+}
+
+// Two-sided ratings build the trust + rewards loop. Care/timeliness feed the
+// rating threshold that gates continued renting; points feed perks/discounts.
+model Rating {
+  id            String   @id @default(cuid())
+  transactionId String
+  raterId       String
+  rateeId       String
+  stars         Int // 1..5 overall
+  care          Int? // condition the item came/went back in
+  timeliness    Int? // on-time return / handoff
+  comment       String?
+  createdAt     DateTime @default(now())
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  rater       User        @relation("RatingRater", fields: [raterId], references: [id])
+  ratee       User        @relation("RatingRatee", fields: [rateeId], references: [id])
+
+  @@unique([transactionId, raterId])
+  @@index([rateeId])
+}
+
+// The $10 Plus tier. Justified by the social feed + AI assistant, NOT as a
+// paywall on renting (free Pickle wins that comparison).
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  tier                 SubscriptionTier   @default(FREE)
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd     DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum Visibility {
+  CIRCLE // friends only (default)
+  FOLLOWER // your followers — creator layer
+  PUBLIC // discoverable
+}
+
+enum ItemStatus {
+  AVAILABLE
+  RENTED
+  SOLD
+  GIVEN
+  ARCHIVED
+}
+
+enum TransactionKind {
+  RENT
+  BUY
+  GIVEAWAY
+}
+
+enum TransactionLayer {
+  FRIEND // free rentals, trust solved by real relationships
+  CREATOR // paid rentals, marketplace rules apply
+}
+
+enum TransactionStatus {
+  REQUESTED
+  ACCEPTED
+  DECLINED
+  ACTIVE
+  RETURNED
+  COMPLETED
+  CANCELLED
+  DISPUTED
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  BLOCKED
+}
+
+enum CircleRole {
+  OWNER
+  MEMBER
+}
+
+enum SubscriptionTier {
+  FREE
+  PLUS // the $10/mo tier
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  PAST_DUE
+}

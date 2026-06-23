@@ -1,0 +1,43 @@
+/* Drobe design tokens.
+   Direction: intimate but fashion-forward. Warm paper, deep aubergine ink, a
+   raspberry accent that reads social and feminine-leaning (the core user is
+   girls sharing closets), with a sage secondary for the friend/circle layer.
+   Deliberately NOT the cream + terracotta + serif default.
+
+   TODO when wiring real type: load Fraunces (display) + Inter (body) via
+   next/font/google and point --font-display / --font-body at them. */
+:root {
+  --paper: #fbf6f2;
+  --ink: #2a2230;
+  --raspberry: #d6336c; /* accent — the creator layer */
+  --sage: #7e9b86;      /* secondary — the friend/circle layer */
+  --muted: #6e6472;
+  --line: #e7ddd6;
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --max: 36rem; /* mobile-first column */
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+a { color: inherit; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+  }
+}

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ---------------------------------------------------------------------------
-# Drobe bootstrap. Run once after cloning to get a working local environment.
+# Knit bootstrap. Run once after cloning to get a working local environment.
 # Idempotent: safe to re-run.
 # ---------------------------------------------------------------------------
 set -euo pipefail
@@ -30,8 +30,8 @@ cat <<'NEXT'
 
 Done. Next steps:
   1. Make sure Postgres is running and DATABASE_URL in .env is correct.
-       (Local quickstart: docker run --name drobe-pg -e POSTGRES_PASSWORD=postgres \
-        -e POSTGRES_DB=drobe -p 5432:5432 -d postgres:16)
+       (Local quickstart: docker run --name knit-pg -e POSTGRES_PASSWORD=postgres \
+        -e POSTGRES_DB=knit -p 5432:5432 -d postgres:16)
   2. Push the schema and seed:
        pnpm db:push && pnpm db:seed
   3. Start everything:

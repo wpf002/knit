@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { createItemSchema } from "@drobe/shared";
+import { createItemSchema } from "@knit/shared";
 
 // NOTE: auth is stubbed. Until real sessions land, owner identity comes from an
 // x-user-id header so the routes are exercisable end to end. Replace before any

@@ -1,1 +1,1 @@
-export { default } from "@drobe/config/prettier";
+export { default } from "@knit/config/prettier";

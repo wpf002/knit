@@ -1,5 +1,5 @@
 {
-  "name": "@drobe/web",
+  "name": "@knit/web",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "clean": "rm -rf .next node_modules .turbo"
   },
   "dependencies": {
-    "@drobe/shared": "workspace:*",
+    "@knit/shared": "workspace:*",
     "next": "^15.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

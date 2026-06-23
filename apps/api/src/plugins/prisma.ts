@@ -1,5 +1,5 @@
 import fp from "fastify-plugin";
-import { prisma } from "@drobe/db";
+import { prisma } from "@knit/db";
 import type { FastifyInstance } from "fastify";
 
 // Decorates fastify with a shared prisma client and closes it on shutdown.

@@ -1,5 +1,5 @@
 {
-  "name": "@drobe/config",
+  "name": "@knit/config",
   "version": "0.0.1",
   "private": true,
   "type": "module",

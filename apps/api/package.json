@@ -1,5 +1,5 @@
 {
-  "name": "@drobe/api",
+  "name": "@knit/api",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -12,8 +12,8 @@
     "clean": "rm -rf dist node_modules .turbo"
   },
   "dependencies": {
-    "@drobe/db": "workspace:*",
-    "@drobe/shared": "workspace:*",
+    "@knit/db": "workspace:*",
+    "@knit/shared": "workspace:*",
     "@fastify/cors": "^10.0.1",
     "fastify": "^5.0.0",
     "fastify-plugin": "^5.0.1",

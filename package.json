@@ -1,8 +1,8 @@
 {
-  "name": "drobe",
+  "name": "knit",
   "version": "0.0.1",
   "private": true,
-  "description": "Drobe — a social closet network. See what's in your friends' and favorite creators' closets, and rent, buy, or give away the actual pieces.",
+  "description": "Knit — a social closet network. See what's in your friends' and favorite creators' closets, and rent, buy, or give away the actual pieces.",
   "packageManager": "pnpm@9.12.0",
   "engines": {
     "node": ">=20"
@@ -13,11 +13,11 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "db:generate": "pnpm --filter @drobe/db generate",
-    "db:migrate": "pnpm --filter @drobe/db migrate",
-    "db:push": "pnpm --filter @drobe/db push",
-    "db:studio": "pnpm --filter @drobe/db studio",
-    "db:seed": "pnpm --filter @drobe/db seed",
+    "db:generate": "pnpm --filter @knit/db generate",
+    "db:migrate": "pnpm --filter @knit/db migrate",
+    "db:push": "pnpm --filter @knit/db push",
+    "db:studio": "pnpm --filter @knit/db studio",
+    "db:seed": "pnpm --filter @knit/db seed",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

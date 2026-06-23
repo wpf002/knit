@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@drobe/shared"],
+  transpilePackages: ["@knit/shared"],
 };
 
 export default nextConfig;

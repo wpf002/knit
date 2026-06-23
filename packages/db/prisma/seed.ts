@@ -4,10 +4,10 @@ import { prisma, Visibility } from "../src/index.js";
 
 async function main() {
   const maya = await prisma.user.upsert({
-    where: { email: "maya@drobe.app" },
+    where: { email: "maya@knit.app" },
     update: {},
     create: {
-      email: "maya@drobe.app",
+      email: "maya@knit.app",
       handle: "maya",
       displayName: "Maya",
       isCreator: true,
@@ -16,10 +16,10 @@ async function main() {
   });
 
   const jess = await prisma.user.upsert({
-    where: { email: "jess@drobe.app" },
+    where: { email: "jess@knit.app" },
     update: {},
     create: {
-      email: "jess@drobe.app",
+      email: "jess@knit.app",
       handle: "jess",
       displayName: "Jess",
     },

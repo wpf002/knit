@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 // PWA manifest — this is a phone-first product; closet browsing lives on mobile.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Drobe",
-    short_name: "Drobe",
+    name: "Knit",
+    short_name: "Knit",
     description: "Your friends' and favorite creators' closets — rent, buy, or give away the actual pieces.",
     start_url: "/",
     display: "standalone",

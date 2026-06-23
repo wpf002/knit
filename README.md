@@ -1,8 +1,8 @@
 # Knit
 
-A social closet network. See what's in your **friends'** closets and your **favorite creators'** closets, and rent, buy, or give away the actual pieces. Stitch Fix / Nuuly give you access to a company's inventory; Drobe gives you access to real people's inventory, with a social feed around it.
+A social closet network. See what's in your **friends'** closets and your **favorite creators'** closets, and rent, buy, or give away the actual pieces. Stitch Fix / Nuuly give you access to a company's inventory; Knit gives you access to real people's inventory, with a social feed around it.
 
-> Codename. Rename freely — it appears in `package.json` names (`@drobe/*`), the Prisma seed, and the web copy.
+> **Name:** "Knit" (renamed from the original "Drobe" codename, which collided with an existing UK app). Chosen for the double meaning — a *close-knit* circle (the friend cluster the network bootstraps from) and *knit* as textile. Final clearance still pending: run a trademark check (apparel + software classes, US/UK), domain, and App Store / Play Store name search before any public launch. The name appears in `package.json` names (`@knit/*`), the Prisma seed, and the web copy.
 
 ## The one idea to keep in your head
 
@@ -30,7 +30,7 @@ Friends carry retention; creators carry growth. Don't blur them. If a feature lo
 ## Layout
 
 ```
-drobe/
+knit/
 ├── apps/
 │   ├── web/          Next.js 15 PWA — the social closet
 │   └── api/          Fastify API (health, items, transactions)
@@ -86,7 +86,7 @@ The schema supports the whole roadmap; build in this sequence so each step valid
 
 Provision a Postgres plugin (sets `DATABASE_URL`), then two services from this repo:
 
-- **api** — root `apps/api`, build `pnpm install && pnpm --filter @drobe/db generate && pnpm --filter @drobe/api build`, start `pnpm --filter @drobe/api start`.
-- **web** — root `apps/web`, build `pnpm install && pnpm --filter @drobe/web build`, start `pnpm --filter @drobe/web start`. Set `NEXT_PUBLIC_API_URL` to the api service URL.
+- **api** — root `apps/api`, build `pnpm install && pnpm --filter @knit/db generate && pnpm --filter @knit/api build`, start `pnpm --filter @knit/api start`.
+- **web** — root `apps/web`, build `pnpm install && pnpm --filter @knit/web build`, start `pnpm --filter @knit/web start`. Set `NEXT_PUBLIC_API_URL` to the api service URL.
 
 Run `pnpm db:migrate deploy` (or `db:push`) against the Railway database before first boot.

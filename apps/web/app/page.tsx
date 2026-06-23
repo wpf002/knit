@@ -35,7 +35,7 @@ export default function Home() {
           margin: 0,
         }}
       >
-        Drobe — social closet
+        Knit — social closet
       </p>
 
       <h1

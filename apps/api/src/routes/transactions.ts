@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { createTransactionSchema } from "@drobe/shared";
+import { createTransactionSchema } from "@knit/shared";
 
 export default async function transactionRoutes(app: FastifyInstance) {
   // Request to rent / buy / receive an item. The server resolves the LAYER from

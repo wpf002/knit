@@ -1,4 +1,4 @@
-// Drobe data model.
+// Knit data model.
 // This schema is the concept made concrete. Read it top to bottom and the
 // product falls out: two transaction LAYERS (friend = free, creator = paid),
 // per-item VISIBILITY tiers (circle / follower / public), a mutual FRIEND graph

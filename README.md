@@ -1,4 +1,4 @@
-# Drobe
+# Knit
 
 A social closet network. See what's in your **friends'** closets and your **favorite creators'** closets, and rent, buy, or give away the actual pieces. Stitch Fix / Nuuly give you access to a company's inventory; Drobe gives you access to real people's inventory, with a social feed around it.
 
